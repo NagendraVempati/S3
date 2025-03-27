@@ -8,44 +8,40 @@ s3 = boto3.client('s3')
 bucket_name = "my-s3-bucket-2025-mar20"
 s3.create_bucket(Bucket=bucket_name, CreateBucketConfiguration={'LocationConstraint': 'us-east-1'})
 print(f"Bucket {bucket_name} created.")
-
+-----------------------------------------------------------------------------------------------------------------------------
 2. Uploading Objects
 Command: aws s3 cp sample.csv s3://my-s3-bucket-2025-mar20/
 Verify: aws s3 ls s3://my-s3-bucket-2025-mar20/ (lists objects).
 
 import boto3
-
 s3 = boto3.client('s3')
 bucket_name = "my-s3-bucket-2025-mar20"
 file_name = "sample.csv"
 s3.upload_file(file_name, bucket_name, file_name)
 print(f"Uploaded {file_name} to {bucket_name}.")
-
+-----------------------------------------------------------------------------------------------------------------------------
 3. Deleting Objects
 
 Command: aws s3 rm s3://my-s3-bucket-2025-mar20/sample.csv
 Verify: aws s3 ls s3://my-s3-bucket-2025-mar20/ (should show empty).
-import boto3
 
+import boto3
 s3 = boto3.client('s3')
 bucket_name = "my-s3-bucket-2025-mar20"
 file_name = "sample.csv"
 s3.delete_object(Bucket=bucket_name, Key=file_name)
 print(f"Deleted {file_name} from {bucket_name}.")
-
-
+-----------------------------------------------------------------------------------------------------------------------------
 4. Updating Objects (Modifying Content or Metadata)
 
 Note: S3 doesn’t allow direct "updates" to object content—you must re-upload. For metadata, you can modify without re-uploading.
 
 AWS CLI (Re-upload Updated File):
 Command: aws s3 cp updated_sample.csv s3://my-s3-bucket-2025-mar20/sample.csv
-
 AWS CLI (Update Metadata):
 Command: aws s3api copy-object --bucket my-s3-bucket-2025-mar20 --key sample.csv --copy-source my-s3-bucket-2025-mar20/sample.csv --metadata "owner=me" --metadata-directive REPLACE
 
 import boto3
-
 s3 = boto3.client('s3')
 bucket_name = "my-s3-bucket-2025-mar20"
 file_name = "sample.csv"
@@ -57,13 +53,12 @@ print(f"Updated {file_name} content.")
 # Update metadata
 s3.copy_object(Bucket=bucket_name, Key=file_name, CopySource=f"{bucket_name}/{file_name}", Metadata={'owner': 'me'}, MetadataDirective='REPLACE')
 print(f"Updated metadata for {file_name}.")
-
+-----------------------------------------------------------------------------------------------------------------------------
 5. Versioning
 Command: aws s3api put-bucket-versioning --bucket my-s3-bucket-2025-mar20 --versioning-configuration Status=Enabled
 Verify: Upload "sample.csv" twice, check versions with aws s3api list-object-versions --bucket my-s3-bucket-2025-mar20.
 
 import boto3
-
 s3 = boto3.client('s3')
 bucket_name = "my-s3-bucket-2025-mar20"
 
@@ -75,16 +70,14 @@ print(f"Versioning enabled for {bucket_name}.")
 s3.upload_file("sample.csv", bucket_name, "sample.csv")
 s3.upload_file("updated_sample.csv", bucket_name, "sample.csv")
 print("Uploaded two versions of sample.csv.")
-
+-----------------------------------------------------------------------------------------------------------------------------
 6. Storage Classes
-
 Command: aws s3 cp archive.csv s3://my-s3-bucket-2025-mar20/ --storage-class GLACIER
 
 AWS CLI (Change Storage Class):
 Command: aws s3api copy-object --bucket my-s3-bucket-2025-mar20 --key sample.csv --copy-source my-s3-bucket-2025-mar20/sample.csv --storage-class GLACIER
 
 import boto3
-
 s3 = boto3.client('s3')
 bucket_name = "my-s3-bucket-2025-mar20"
 
@@ -95,5 +88,5 @@ print("Uploaded archive.csv to Glacier.")
 # Change storage class
 s3.copy_object(Bucket=bucket_name, Key="sample.csv", CopySource=f"{bucket_name}/sample.csv", StorageClass='GLACIER')
 print("Moved sample.csv to Glacier.")
-
+-----------------------------------------------------------------------------------------------------------------------------
 
